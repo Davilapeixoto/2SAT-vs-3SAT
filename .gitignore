@@ -1,0 +1,37 @@
+# Binarios compilados em C
+/2sat
+/3sat
+/2sat.exe
+/3sat.exe
+*.o
+*.out
+
+# Cache e bytecode do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ambientes virtuais Python
+.venv/
+venv/
+env/
+ENV/
+
+# Configuracoes de editores e IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Arquivos temporarios de sistema operacional
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Instancias geradas automaticamente (reproduziveis via scripts/gerar_entradas.py com seed=42)
+dados/benchmark/
+
+# Resultados gerados pelo benchmark e graficos
+# (Deixe descomentado para ignorar, ou comente com '#' se quiser versionar os graficos/CSVs no GitHub)
+resultados/

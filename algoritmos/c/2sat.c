@@ -1,6 +1,11 @@
+#define _XOPEN_SOURCE 700
+
 #include "cnf.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <sys/resource.h>
+#include <time.h>
 
 typedef struct {
     int *inicio;
@@ -63,7 +68,6 @@ void dfs1(Grafo *grafo, int atual, int *visitado, int *ordem, int *total) {
         }
     }
 
-    
     ordem[*total] = atual;
     (*total)++;
 }
@@ -78,13 +82,17 @@ void dfs2(Grafo *grafo, int atual, int grupo, int *componentes) {
     }
 }
 
-int resolver_2sat(FormulaCNF *formula) {
+int resolver_2sat(FormulaCNF *formula, size_t *memoria_pico) {
     int n = formula->variaveis;
     int vertices = 2 * n;
     int limite_arestas = 2 * formula->quantidade;
     Grafo grafo = {0};
     Grafo invertido = {0};
     int resultado = 1;
+
+    if (memoria_pico != NULL) {
+        *memoria_pico = 0;
+    }
 
     for (int i = 0; i < formula->quantidade; i++) {
         if (formula->clausulas[i].tamanho == 0) {
@@ -126,6 +134,12 @@ int resolver_2sat(FormulaCNF *formula) {
         return -1;
     }
 
+    if (memoria_pico != NULL) {
+        size_t mem_grafo = ((size_t)vertices + 1 + 2 * ((size_t)limite_arestas + 1)) * sizeof(int);
+        size_t mem_aux = 3 * ((size_t)vertices + 1) * sizeof(int);
+        *memoria_pico = 2 * mem_grafo + mem_aux;
+    }
+
     int total = 0;
     for (int i = 0; i < vertices; i++) {
         if (visitado[i] == 0) {
@@ -160,8 +174,18 @@ int resolver_2sat(FormulaCNF *formula) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        printf("Uso: %s arquivo.cnf\n", argv[0]);
+    int modo_bench = 0;
+    int repeticoes = 1;
+
+    if (argc == 4 && strcmp(argv[2], "--bench") == 0) {
+        modo_bench = 1;
+        repeticoes = atoi(argv[3]);
+        if (repeticoes <= 0) {
+            printf("Uso: %s arquivo.cnf [--bench repeticoes]\n", argv[0]);
+            return 1;
+        }
+    } else if (argc != 2) {
+        printf("Uso: %s arquivo.cnf [--bench repeticoes]\n", argv[0]);
         return 1;
     }
 
@@ -171,16 +195,73 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    int resultado = resolver_2sat(&formula);
-    cnf_liberar(&formula);
+    if (modo_bench == 0) {
+        int resultado = resolver_2sat(&formula, NULL);
+        cnf_liberar(&formula);
 
-    if (resultado == 1) {
-        printf("SAT\n");
-    } else if (resultado == 0) {
-        printf("UNSAT\n");
-    } else {
+        if (resultado == 1) {
+            printf("SAT\n");
+        } else if (resultado == 0) {
+            printf("UNSAT\n");
+        } else {
+            printf("Erro de memoria\n");
+            return 1;
+        }
+        return 0;
+    }
+
+    long long *tempos = malloc((size_t)repeticoes * sizeof(long long));
+    if (tempos == NULL) {
+        cnf_liberar(&formula);
         printf("Erro de memoria\n");
         return 1;
     }
+
+    int resultado = 0;
+    size_t memoria_pico = 0;
+
+    for (int r = 0; r < repeticoes; r++) {
+        struct timespec inicio, fim;
+        size_t mem_exec = 0;
+
+        clock_gettime(CLOCK_MONOTONIC, &inicio);
+        resultado = resolver_2sat(&formula, &mem_exec);
+        clock_gettime(CLOCK_MONOTONIC, &fim);
+
+        if (resultado < 0) {
+            free(tempos);
+            cnf_liberar(&formula);
+            printf("Erro de memoria\n");
+            return 1;
+        }
+
+        if (mem_exec > memoria_pico) {
+            memoria_pico = mem_exec;
+        }
+
+        tempos[r] = (long long)(fim.tv_sec - inicio.tv_sec) * 1000000000LL +
+                    (long long)(fim.tv_nsec - inicio.tv_nsec);
+    }
+
+    struct rusage uso;
+    long rss_kb = 0;
+    if (getrusage(RUSAGE_SELF, &uso) == 0) {
+        rss_kb = uso.ru_maxrss;
+    }
+
+    printf("RESULTADO:%s\n", resultado == 1 ? "SAT" : "UNSAT");
+    printf("TEMPOS_NS:");
+    for (int r = 0; r < repeticoes; r++) {
+        if (r > 0) {
+            printf(",");
+        }
+        printf("%lld", tempos[r]);
+    }
+    printf("\n");
+    printf("MEMORIA_PICO_BYTES:%zu\n", memoria_pico);
+    printf("MEMORIA_RSS_KB:%ld\n", rss_kb);
+
+    free(tempos);
+    cnf_liberar(&formula);
     return 0;
 }
