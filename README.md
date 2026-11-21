@@ -11,7 +11,7 @@ Foram desenvolvidas **4 implementações** equivalentes (2 algoritmos x 2 lingua
 | Problema | Classe | Algoritmo | Complexidade de Tempo | Complexidade de Espaço | Linguagens |
 | :--- | :---: | :--- | :--- | :--- | :---: |
 | **2-SAT** | P | Kosaraju (SCC em grafo de implicações) | `Θ(n + m)` | `Θ(n + m)` | C e Python |
-| **3-SAT** | NP-completo | DPLL (Backtracking + Propagação Unitária) | O(2^n * m) no pior caso | O(n² + m) | C e Python |
+| **3-SAT** | NP-completo | DPLL (Backtracking + Propagação Unitária) | O(n² * m) no pior caso | O(n² + m) | C e Python |
 
 ## Estrutura do Repositório
 
