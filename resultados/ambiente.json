@@ -1,0 +1,13 @@
+{
+  "sistema_operacional": "Linux-7.3.4-1-cachyos-x86_64-with-glibc2.44",
+  "arquitetura": "x86_64",
+  "cpu": "AMD Ryzen 7 7735HS with Radeon Graphics",
+  "nucleos_logicos": 16,
+  "ram_total_gb": 14.92,
+  "gcc_versao": "gcc (GCC) 16.2.1 20260810",
+  "flags_compilacao_c": "-std=c11 -O2 -Wall -Wextra -Wpedantic",
+  "python_versao": "3.14.10",
+  "repeticoes_padrao": 20,
+  "repeticoes_lento": 15,
+  "timeout_limite_s": 60.0
+}

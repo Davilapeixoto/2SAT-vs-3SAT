@@ -34,4 +34,4 @@ dados/benchmark/
 
 # Resultados gerados pelo benchmark e graficos
 # (Deixe descomentado para ignorar, ou comente com '#' se quiser versionar os graficos/CSVs no GitHub)
-resultados/
+#resultados/
