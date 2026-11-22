@@ -1,3 +1,5 @@
+
+import json
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -10,6 +12,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 CSV_BENCH = RAIZ / "resultados" / "benchmark.csv"
 DIR_GRAFICOS = RAIZ / "resultados" / "graficos"
 ARQ_TABELAS = RAIZ / "resultados" / "tabelas_resumo.md"
+ARQ_AMBIENTE = RAIZ / "resultados" / "ambiente.json"
 
 COR_C = "#1f77b4"
 COR_PY = "#ff7f0e"
@@ -186,7 +189,17 @@ def grafico_04_comparacao_linguagens(df):
         ax.set_ylim(0, speedup.max() * 1.18)
         ax.legend()
 
-    fig.suptitle("Comparação entre Linguagens: C (-O2) vs. Python 3.12", fontsize=13, fontweight="bold")
+    versao_python = "3"
+    if ARQ_AMBIENTE.is_file():
+        with ARQ_AMBIENTE.open(encoding="utf-8") as arquivo:
+            ambiente = json.load(arquivo)
+            versao_python = ambiente.get("python_versao", "3")
+
+    fig.suptitle(
+        f"Comparação entre Linguagens: C (-O2) vs. Python {versao_python}",
+        fontsize=13,
+        fontweight="bold"
+    )
     fig.tight_layout()
     fig.savefig(DIR_GRAFICOS / "04_comparacao_linguagens.png")
     plt.close(fig)
