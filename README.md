@@ -12,7 +12,7 @@ Foram desenvolvidas **4 implementações** equivalentes (2 algoritmos x 2 lingua
 | Problema | Classe | Algoritmo | Complexidade de Tempo | Complexidade de Espaço | Linguagens |
 | :--- | :---: | :--- | :--- | :--- | :---: |
 | **2-SAT** | P | Kosaraju (SCC em grafo de implicações) | `Θ(n + m)` | `Θ(n + m)` | C e Python |
-| **3-SAT** | NP-completo | DPLL (Backtracking + Propagação Unitária) | `O(2ⁿ * m)` no pior caso | `O(n² + m)` | C e Python |
+| **3-SAT** | NP-completo | DPLL (Backtracking + Propagação Unitária) | `O(2ⁿ · n · m)` no pior caso | `O(n² + m)` | C e Python |
 
 ## Estrutura do Repositório
 
@@ -146,10 +146,10 @@ Serão gerados `resultados/tabelas_resumo.md` e 6 gráficos em `resultados/grafi
 
 1. `01_2sat_vs_3sat.png` — Contraste P vs. NP (2-SAT linear vs. 3-SAT exponencial com limite de 60 s).
 2. `02_2sat_teorico_vs_medido.png` — Validação assintótica do 2-SAT em escala log-log e razão `T(n) / (n + m)`.
-3. `03_3sat_teorico_vs_medido.png` — Curva medida do 3-SAT (SAT vs. UNSAT) com ajuste exponencial c * b^n.
-4. `04_comparacao_linguagens.png` — Speedup médio de C (`-O2`) sobre Python 3.
+3. `03_3sat_teorico_vs_medido.png` — Curva medida do 3-SAT (SAT vs. UNSAT) com ajuste exponencial `c · bⁿ`.
+4. `04_comparacao_linguagens.png` — Speedup médio de C (`-O2`) sobre Python 3.14.10.
 5. `05_casos_forcados.png` — Comparação entre melhor caso, caso médio e pior caso.
-6. `06_memoria_teorico_vs_medido.png` — Memória dinâmica medida vs. complexidade de espaço teórica (`Θ(n + m)` e O(n²)).
+6. `06_memoria_teorico_vs_medido.png` — Memória dinâmica medida vs. complexidade de espaço teórica (`Θ(n + m)` e `O(n²)`).
 
 ## Execução Individual e Limpeza
 
